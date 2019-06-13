@@ -1,0 +1,88 @@
+m255
+K3
+13
+cModel Technology
+dC:\Users\Howeng\Desktop\ComputerOrganization\hw3\F740XXXXX\src
+T_opt
+VBQok1n8`Q=XRW5^32E6Ll3
+04 6 4 work top_tb fast 0
+=1-6045cbc4677b-5cd4ae31-14d-2f8c
+o-quiet -auto_acc_if_foreign -work work
+n@_opt
+OL;O;10.1c;51
+vCPU
+ICLhCD]jF9JkciIhRSG26z1
+Vcdi;=jBiEcz[39cVT0^Hj1
+Z0 dC:\Users\Howeng\Desktop\ComputerOrganization\hw4\hw4_single_cycle_riscv_cpu\F740XXXXX\src
+Z1 w1548265436
+FCPU.v
+Z2 8C:/Users/Howeng/Desktop/ComputerOrganization/hw4/hw4_single_cycle_riscv_cpu/F740XXXXX/src/top.v
+Z3 FC:/Users/Howeng/Desktop/ComputerOrganization/hw4/hw4_single_cycle_riscv_cpu/F740XXXXX/src/top.v
+L0 3
+Z4 OL;L;10.1c;51
+r1
+31
+Z5 !s108 1557442066.976000
+Z6 !s107 SRAM.v|CPU.v|C:/Users/Howeng/Desktop/ComputerOrganization/hw4/hw4_single_cycle_riscv_cpu/F740XXXXX/src/top.v|
+Z7 !s90 -reportprogress|300|-work|work|-vopt|C:/Users/Howeng/Desktop/ComputerOrganization/hw4/hw4_single_cycle_riscv_cpu/F740XXXXX/src/top.v|
+Z8 o-work work -L mtiAvm -L mtiOvm -L mtiUvm -L mtiUPF
+n@c@p@u
+!s100 >=TiYJWB5a[OLZ<@0NOU92
+!i10b 1
+!s85 0
+vSRAM
+IYPgoa3?B>?8cm;HfgghUW1
+V0`jBGcN;VH6J[CY_EFUQc2
+Z9 dC:\Users\Howeng\Desktop\ComputerOrganization\hw4\hw4_single_cycle_riscv_cpu\F740XXXXX\src
+R1
+FSRAM.v
+R2
+R3
+L0 3
+R4
+r1
+31
+R5
+R6
+R7
+R8
+n@s@r@a@m
+!s100 fZEVZg0=o4dKY65>>Z2kN1
+!i10b 1
+!s85 0
+vtop
+IHI^eoj7<z^OX7Yfd[Qe^O0
+VCS`:UbVMcNfF?nKfKBYYJ0
+R9
+R1
+R2
+R3
+L0 6
+R4
+r1
+31
+R5
+R6
+R7
+R8
+!s100 l5fGbM:?]hoaJWSX3766K1
+!i10b 1
+!s85 0
+vtop_tb
+I88mQbN:T@Qa?>FeWaKJUl3
+VN7^ihbmI9enFg9D=Qco243
+R9
+w1548264156
+8C:/Users/Howeng/Desktop/ComputerOrganization/hw4/hw4_single_cycle_riscv_cpu/F740XXXXX/src/top_tb.v
+FC:/Users/Howeng/Desktop/ComputerOrganization/hw4/hw4_single_cycle_riscv_cpu/F740XXXXX/src/top_tb.v
+L0 14
+R4
+r1
+31
+R8
+!i10b 1
+!s100 LA_Ej4k=Wh_nND^>T@ABn3
+!s85 0
+!s108 1557442067.710000
+!s107 C:/Users/Howeng/Desktop/ComputerOrganization/hw4/hw4_single_cycle_riscv_cpu/F740XXXXX/src/top_tb.v|
+!s90 -reportprogress|300|-work|work|-vopt|C:/Users/Howeng/Desktop/ComputerOrganization/hw4/hw4_single_cycle_riscv_cpu/F740XXXXX/src/top_tb.v|

@@ -1,0 +1,243 @@
+// Please include verilog file if you write module in other file
+
+module CPU(
+    clk,
+    rst,
+    instr_read,
+    instr_addr,
+    instr_out,
+    data_read,
+    data_write,
+    data_addr,
+    data_in,
+    data_out
+);
+
+input clk,rst;
+input [31:0] instr_out,data_out;
+output reg instr_read,data_read,data_write;
+output reg [31:0] instr_addr,data_addr,data_in;
+
+reg [3:0] Default;
+reg [31:0] temp;
+reg [31:0] register [31:0];
+reg [6:0] opcode; 
+reg [4:0] rd;
+reg [2:0] funct3;
+reg [6:0] funct7;
+reg [4:0] rs1;
+reg [4:0] rs2;
+reg [31:0] pc;
+reg [31:0] imm;
+integer i;
+
+initial
+begin
+  instr_addr = 32'd0;
+end
+
+/* Add your design */
+always@(posedge clk or posedge rst)
+  begin
+        //initial $zero
+        Default = 4'd0;
+        register[0] = 32'd0;
+        imm = 32'd0;
+        data_write  = 0;
+        instr_read = 1;
+        data_read = 1;
+        if (rst) begin
+          instr_read = 1;
+          data_read = 1;
+          data_write = 0;
+          instr_addr = 32'd0;
+          opcode = 7'd0;
+          funct3 = 3'd0;
+          funct7 = 7'd0;
+          rd = 5'd0;              
+          rs1 = 5'd0;
+          rs2 = 5'd0;
+          pc  = 32'd0;
+          temp = 32'd0;
+          
+          for (i=0; i<=31; i=i+1) begin
+              register[i] = 32'd0;
+              imm[i] = 1'b0;             
+          end
+        end
+                                     
+        
+        opcode = instr_out[6:0]; 
+        case(opcode)
+          //R-type
+          7'b0110011:begin
+            funct3 = instr_out[14:12];            
+            funct7 = instr_out[31:25];
+            rs1 = instr_out[19:15];
+            rs2 = instr_out[24:20];
+            rd  = instr_out[11:7];
+            case(funct3)
+              3'b000:begin 
+                if(funct7 == 7'b0000000) register[rd] = register[rs1] + register[rs2];
+                if(funct7 == 7'b0100000) register[rd] = register[rs1] - register[rs2];              
+              end
+              3'b001:begin
+                temp = register[rs2];
+                register[rd] = register[rs1] << temp[4:0];
+              end
+              3'b010:begin 
+                register[rd] = $signed(register[rs1]) < $signed(register[rs2])?1:0;
+              end
+              3'b011:begin 
+                register[rd] = register[rs1] < register[rs2]?1:0;
+              end
+              3'b100:begin 
+                register[rd] = register[rs1] ^ register[rs2];
+              end
+              3'b101:begin 
+                temp = register[rs2];
+                if(funct7 == 7'b0000000) register[rd] = register[rs1] >> temp[4:0];
+                if(funct7 == 7'b0100000) register[rd] = $signed(register[rs1]) >> temp[4:0];
+              end
+              3'b110:begin
+                register[rd] = register[rs1] | register[rs2];
+              end
+              3'b111:begin
+                register[rd] = register[rs1] & register[rs2];
+              end                                               
+            endcase
+          end
+          //I-type          
+          7'b0000011:begin
+            rs1 = instr_out[19:15];
+            rd  = instr_out[11:7];
+            imm[11:0] = instr_out[31:20]; 
+            data_addr = register[rs1] + {{20{imm[11]}},imm[11:0]};
+            
+          end
+          7'b0010011:begin   
+            funct3 = instr_out[14:12];
+            rs1 = instr_out[19:15];
+            rd  = instr_out[11:7];
+            imm[11:0] = instr_out[31:20];
+            //I didn't do bit-extend at here
+            case(funct3)
+              3'b000:begin 
+                register[rd] = register[rs1] + {{20{imm[11]}},imm[11:0]};
+              end
+              3'b001:begin 
+                register[rd] = register[rs1] << imm[4:0];
+              end              
+              3'b010:begin 
+                register[rd] = $signed(register[rs1]) < $signed({{20{imm[11]}},imm[11:0]})?1:0;
+              end
+              3'b011:begin 
+                register[rd] = $signed(register[rs1]) < {{20{imm[11]}},imm[11:0]}?1:0;
+              end
+              3'b100:begin 
+                register[rd] = register[rs1] ^ {{20{imm[11]}},imm[11:0]};
+              end
+              3'b101:begin 
+                if(imm[11:5] == 7'b0000000) begin 
+                  register[rd] = register[rs1] >> imm[4:0];
+                end
+                if(imm[11:5] == 7'b0100000) begin 
+                  register[rd] = $signed(register[rs1]) >>> imm[4:0];
+                end
+              end
+              3'b110:begin 
+                register[rd] = register[rs1] | {{20{imm[11]}},imm[11:0]};
+              end
+              3'b111:begin 
+                register[rd] = register[rs1] & {{20{imm[11]}},imm[11:0]};
+              end                
+            endcase          
+          end
+          7'b1100111:begin 
+            rs1 = instr_out[19:15];
+            rd  = instr_out[11:7];
+            imm[11:0] = instr_out[31:20];                                    
+            temp = pc;
+            pc = {{20{imm[11]}},imm[11:0]} + register[rs1] - 32'd4;
+            register[rd] = temp + 32'd4;
+          end
+          //S-type  
+          7'b0100011:begin 
+            data_write = 1;
+            imm[4:0]   = instr_out[11:7];
+            imm[11:5]  = instr_out[31:25];
+            funct3     = instr_out[14:12];
+            rs1        = instr_out[19:15];
+            rs2        = instr_out[24:20];
+            imm        = {{20{imm[11]}},imm[11:0]};
+            data_addr  = register[rs1] + imm;
+            data_in    = register[rs2];                                    
+          end
+          //B-type
+          7'b1100011:begin 
+            funct3 = instr_out[14:12];
+            rs1    = instr_out[19:15];
+            rs2    = instr_out[24:20];            
+            imm[4:1]  = instr_out[11:8];
+            imm[10:5]  = instr_out[30:25];
+            imm[11]    = instr_out[7];
+            imm[12]    = instr_out[31];
+            case(funct3)
+              3'b000:begin
+                pc = register[rs1] == register[rs2]?pc+{{19{imm[12]}},imm[12:0]}: pc+32'd4;
+              end
+              3'b001:begin
+                pc = register[rs1] != register[rs2]?pc+{{19{imm[12]}},imm[12:0]}: pc+32'd4;
+              end
+              3'b100:begin
+                pc = $signed(register[rs1]) != $signed(register[rs2])?pc+{{19{imm[12]}},imm[12:0]}: pc+32'd4;
+              end
+              3'b101:begin
+                pc = $signed(register[rs1]) >= $signed(register[rs2])?pc+{{19{imm[12]}},imm[12:0]}: pc+32'd4; 
+              end
+              3'b110:begin
+                pc = register[rs1] < register[rs2]?pc+{{19{imm[12]}},imm[12:0]}: pc+32'd4;
+              end
+              3'b111:begin
+                pc = register[rs1] >= register[rs2]?pc+{{19{imm[12]}},imm[12:0]}: pc+32'd4;
+              end                            
+            endcase
+            pc = pc - 32'd4; 
+          end
+          //U_type  
+          7'b0010111:begin 
+            rd = instr_out[11:7];
+            imm[31:12] = instr_out[31:12];            
+            register[rd] = pc + imm;
+            Default = 4'd2;
+          end
+          7'b0110111:begin 
+            rd = instr_out[11:7];
+            imm[31:12] = instr_out[31:12];
+            register[rd] = imm;
+          end
+          //J-type
+          7'b1101111:begin 
+            rd = instr_out[11:7];
+            imm[19:12] = instr_out[19:12];
+            imm[11]    = instr_out[20];
+            imm[10:1]  = instr_out[30:21];
+            imm[20]    = instr_out[31];
+            register[rd] = pc + 32'd4;
+            pc = pc + {{11{imm[20]}},imm[20:1],1'b0} - 32'd4;
+          end 
+          default: Default = 4'd3;                                   
+        endcase
+        //Program Counter+ 4
+          pc = pc + 32'd4;
+          instr_addr = pc;            
+           
+  end
+
+always@(negedge clk)
+begin
+  if(opcode == 7'b0000011)
+    register[rd] = data_out;            
+end
+
+endmodule
